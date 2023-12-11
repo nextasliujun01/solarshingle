@@ -1,0 +1,203 @@
+﻿<!--
+ * Copyright(C) 2023 - 2033 Solarshingle Canada - All Rights Reserved
+ * -->
+<!DOCTYPE html>
+<!--<style>
+    .name_wrapper {
+        display: flex;
+        margin: 10px 0;
+    }
+</style>-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="style1.css" />
+</head>
+<body>
+    <p><font size="+3">Roof with Two Layers </font></p>
+    <p><font size="+1">Fill the following data: </font> </p>
+    <form>
+        <section>
+            <div class="name_wrapper">
+                <label for="lower_btm"> Length of Bottom of Lower Layer (inch) : </label><br>
+                <input type="number" id="lower_btm" name="lower_btm" value="100" size="10" min="0" required><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="lower_top"> Length of Top of Lower Layer (inch) : </label><br>
+                <input type="number" id="lower_top" name="lower_top" value="300" size="10" min="0" required><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="lower_left_off"> Length of Left Offset of Lower Layer (inch) : </label><br>
+                <input type="number" id="lower_left_off" name="lower_left_off" value="100" size="10" readonly><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="lower_right_off"> Length of Right Offset of Lower Layer (inch) : </label><br>
+                <input type="number" id="lower_right_off" name="lower_right_off" value="100" size="10" readonly><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="lower_height"> Height of Lower Layer : </label><br>
+                <input type="number" id="lower_height" name="lower_height" value="200" size="10" min="0" required><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="dislocation"> Length of Dislocation : (found by program) </label><br>
+                <input type="number" id="dislocation" name="dislocation" value="50" size="10" readonly><br>
+            </div>
+            <!-- Upper layer  -->
+            <div class="name_wrapper">
+                <label for="upper_btm"> Length of Bottom of Upper Layer (inch) : </label><br>
+                <input type="number" id="upper_btm" name="upper_btm" value="400" size="10" min="0" required><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="upper_top"> Length of Top of Upper Layer  (inch) : </label><br>
+                <input type="number" id="upper_top" name="upper_top" value="500" size="10" min="0" required><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="upper_left_off"> Length of Left Offset of Upper Layer (inch) : </label><br>
+                <input type="number" id="upper_left_off" name="upper_left_off" value="50" size="10" readonly><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="upper_right_off"> Length of Right Offset of Upper Layer (inch) : </label><br>
+                <input type="number" id="upper_right_off" name="upper_right_off" value="50" size="10" readonly><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="upper_height"> Height of Upper Layer : </label><br>
+                <input type="number" id="upper_height" name="upper_height" value="150" size="10" min="0" required><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="angle"> Angle or Pitch of Roof (in deg): </label><br>
+                <input type="number" id="angle" name="angle" value="0" min="0" size="150"><br>
+            </div>
+        </section>
+
+
+
+        <p id="demo"><font size="+2">Click the following buttons: "Get Data", "Try it" and "Draw", in sequence to obtain the layout</font></p>
+        <button type="button" onclick="read()">Get Data </button>
+        <button type="button" onclick="test_case5()">Try it</button>
+        <button type="button" onclick="draw_case5()">Draw</button>
+        <!--<button type="button" onclick="save_data()" disabled>Save to file</button>-->
+        <button type="button" value="Print" onclick="window.print()">Print</button><br><br>
+        <b>
+            <label for="num_ss"> Number of Solar Singles : </label>
+            <input type="number" id="num_ss" name="num_ss" style='width:50px;' readonly>
+            <label for="perimeter"> Closure in L.F.:  </label>
+            <input type="number" id="perimeter" name="perimeter" style='width:50px;' readonly>
+        </b>
+
+    </form>
+    <p id="draw"><font size="+2">On the layout, the eave is at the bottom and the ridge is at the top</font> </p>
+    <canvas id="canvas" height="600" width="1000">
+    </canvas>
+
+</body>
+
+</html>
+<script type="text/javascript" src="calculate-case5.js"></script>
+<script>
+    window.onload = function () {
+        var left_offset = document.getElementById('left_offset');
+        var right_offset = document.getElementById('rightt_offset');
+        var eave = document.getElementById('eave');
+        var ridge = document.getElementById('ridge');
+        function calculate_left_offset() {
+            if (eave == ridge) {
+                left_offset.value = 0;
+            }
+            else if (eave > ridge) {
+                left_offset.value = eave.value - ridge.value - right_offset.value;
+            }
+            else {
+                left_offset.value = ridge.value - eave.value - right_offset.value;
+            }
+        }
+        function calculate_right_offset() {
+            if (eave == ridge) {
+                right_offset.value = 0;
+            }
+            else if (eave > ridge) {
+                right_offset.value = eave.value - ridge.value - left_offset.value;
+            }
+            else {
+                right_offset.value = ridge.value - eave.value - left_offset.value;
+            }
+        }
+        if ((eave) && (ridge) && (left_offset) && (right_offset)) {
+            right_offset.addEventListener('keyup', calculate_left_offset);
+            left_offset.addEventListener('keyup', calculate_right_offset);
+        }
+
+    }
+
+    document.getElementById("lower_btm").addEventListener("change", change_lower_offsets);
+    document.getElementById("lower_top").addEventListener("change", change_lower_offsets);
+    document.getElementById("upper_btm").addEventListener("change", change_upper_offsets);
+    document.getElementById("upper_top").addEventListener("change", change_upper_offsets);
+
+    document.getElementById("lower_left_off").addEventListener("change", change_right);
+    // If right offset changes, need to go back to modify left offset.
+    document.getElementById("lower_right_off").addEventListener("change", change_left);
+
+    function change_lower_offsets() {
+        var lower_btm = document.getElementById('lower_btm').value;
+        var lower_top = document.getElementById('lower_top').value;
+
+        var temp = Math.abs(Number(lower_btm) - Number(lower_top));
+        console.log("temp " + temp);
+        var x = Math.floor(temp / 2);
+        var lower_left_off = document.getElementById("lower_left_off");
+        var lower_right_off = document.getElementById("lower_right_off");
+        lower_left_off.value = x;
+        lower_right_off.value = x;
+
+        var disp = document.getElementById("dislocation");
+        var upper_btm = document.getElementById('upper_btm').value;
+        var tmp = Math.floor(Math.abs(upper_btm - lower_top) / 2);
+        disp.value = tmp; 
+
+    }
+    function change_upper_offsets() {
+        var upper_btm = document.getElementById('upper_btm').value;
+        var upper_top = document.getElementById('upper_top').value;
+
+        var temp = Math.abs(Number(upper_btm) - Number(upper_top));
+        console.log("temp " + temp);
+        var x = Math.floor(temp / 2);
+        var upper_left_off = document.getElementById("upper_left_off");
+        var upper_right_off = document.getElementById("upper_right_off");
+        upper_left_off.value = x;
+        upper_right_off.value = x;
+
+        var disp = document.getElementById("dislocation");
+        var lower_top = document.getElementById('lower_top').value;
+        var tmp = Math.floor(Math.abs(upper_btm - lower_top) / 2);
+        disp.value = tmp;
+    }
+    function change_right() {
+        var r_off = document.getElementById("right_offset");
+        var x = document.getElementById("left_offset");
+        console.log("Left " + x.value);
+        var e = document.getElementById('eave').value;
+        var r = document.getElementById('ridge').value;
+
+        var temp = Math.abs(Number(e) - Number(r));
+
+        console.log("temp " + temp);
+
+        r_off.value = temp - Number(x.value);
+    }
+    function change_left() {
+        var r_off = document.getElementById("right_offset");
+        var l_off = document.getElementById("left_offset");
+        console.log("Left " + l_off.value);
+        var e = document.getElementById('eave').value;
+        var r = document.getElementById('ridge').value;
+
+        var temp = Math.abs(Number(e) - Number(r));
+
+        console.log("temp " + temp);
+
+        l_off.value = temp - Number(r_off.value);
+    }
+</script>

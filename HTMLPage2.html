@@ -1,0 +1,120 @@
+﻿<!--
+ * Copyright (C) 2023-2033 Solarshingle Canada - All Rights Reserved
+ *-->
+<!DOCTYPE html>
+<!--<style>
+    .name_wrapper {
+        display: flex;
+        margin: 10px 0;
+    }
+</style>-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="style1.css" />
+</head>
+<body>
+    <p><font size="+4">Parallelogram Shape</font></p>
+    <p><font size="+2">Fill the following data: For left offset and right offset, you only consider the eave side. DO NOT use offset on the ridge side </font> </p>
+    <form>
+        <section>
+            <div class="name_wrapper">
+                <label for="eave"> Length of Eave (inch) : </label><br>
+                <input type="number" id="eave" name="eave" value="300" size="50" required><br>
+            </div><br>
+
+            <div class="name_wrapper">
+                <label for="left_offset"> Length of Left Offset (inch) on eave : </label><br>
+                <input type="number" id="left_offset" name="left_offset" value="200" size="50" required><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="right_offset"> Length of Right Offset (inch) on eave : </label><br>
+                <input type="number" id="right_offset" name="right_offset" value="0" size="50" required><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="height_measured"> Distance between Eave and Ridge (Measured on Map) (inch) : </label><br>
+                <input type="number" id="height_measured" name="height_measured" value="250" size="50" required><br>
+            </div>
+            <div class="name_wrapper">
+                <label for="angle"> Angle or Pitch of Roof (in deg): </label><br>
+                <input type="number" id="angle" name="angle" value="18.4" size="50"><br>
+            </div>
+        </section>
+        <p id="demo"><font size="+2">Click the following buttons: "Get Data", "Try it" and "Draw", in sequence to obtain the layout</font></p>
+        <button type="button" onclick="read()">Get Data </button>
+        <button type="button" onclick="test_case4()">Try it</button>
+        <button type="button" onclick="draw()">Draw</button>
+        <!--<button type="button" onclick="save_data()" disabled>Save to file</button>-->
+        <button type="button" value="Print" onclick="window.print()">Print</button><br><br>
+        <b>
+            <label for="num_ss"> Number of Solar Singles : </label>
+            <input type="number" id="num_ss" name="num_ss" style='width:50px;' readonly>
+            <label for="perimeter"> Closure in L.F.:  </label>
+            <input type="number" id="perimeter" name="perimeter" style='width:50px;' readonly>
+        </b>
+
+    </form>
+    <p id="draw"><font size="+2">On the layout, the eave is at the bottom and the ridge is at the top</font> </p>
+    <canvas id="canvas" height="600" width="1000">
+    </canvas>
+
+</body>
+
+</html>
+<script type="text/javascript" src="calculate-case4.js"></script>
+<script>
+    window.onload = function () {
+        var left_offset = document.getElementById('left_offset');
+        var right_offset = document.getElementById('rightt_offset');
+        var eave = document.getElementById('eave');
+        var ridge = document.getElementById('ridge');
+        function calculate_left_offset() {
+            if (eave == ridge) {
+                left_offset.value = 0;
+            }
+            else if (eave > ridge) {
+                left_offset.value = eave.value - ridge.value - right_offset.value;
+            }
+            else {
+                left_offset.value = ridge.value - eave.value - right_offset.value;
+            }
+        }
+        function calculate_right_offset() {
+            if (eave == ridge) {
+                right_offset.value = 0;
+            }
+            else if (eave > ridge) {
+                right_offset.value = eave.value - ridge.value - left_offset.value;
+            }
+            else {
+                right_offset.value = ridge.value - eave.value - left_offset.value;
+            }
+        }
+        if ((eave) && (ridge) && (left_offset) && (right_offset)) {
+            right_offset.addEventListener('keyup', calculate_left_offset);
+            left_offset.addEventListener('keyup', calculate_right_offset);
+        }
+
+    }
+    //document.getElementById("eave").addEventListener("change", change_ridge);
+
+    document.getElementById("left_offset").addEventListener("change", change_right);
+    // If right offset changes, need to go back to modify left offset.
+    document.getElementById("right_offset").addEventListener("change", change_left);
+
+    function change_right() {
+        var r_off = document.getElementById("right_offset");
+        var l_off = document.getElementById("left_offset");
+
+        r_off.value = 0;
+    }
+    function change_left() {
+        var r_off = document.getElementById("right_offset");
+        var l_off = document.getElementById("left_offset");
+
+        l_off.value = 0;
+    }
+
+</script>
